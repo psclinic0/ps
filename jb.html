@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en" manifest="cache.appcache">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PS Clinic - Jailbreak</title>
+    <style>
+      :root {
+        --bg-main: #090b0e;
+        --bg-card: #131720;
+        --border-color: #1e2634;
+        --accent-color: #0070d1; /* لون بلايستيشن المميز */
+        --text-main: #e6ebf2;
+        --text-muted: #8b95a3;
+        --success: #3fb950;
+        --warning: #d29922;
+        --danger: #f85149;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        background: var(--bg-main);
+        color: var(--text-main);
+        font: 16px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px 20px;
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      }
+
+      #brand img {
+        width: 36px;
+        height: 36px;
+        margin-right: 12px;
+        border-radius: 50%;
+        border: 2px solid var(--accent-color);
+        object-fit: cover;
+      }
+
+      #brand b {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: .18em;
+        color: #ffffff;
+        text-transform: uppercase;
+      }
+
+      /* running: a spinner under the brand. jb.js sets body.done / body.fail / body.log. */
+      #spin {
+        position: fixed;
+        top: calc(50% + 20px);
+        left: 50%;
+        width: 52px;
+        height: 52px;
+        margin: -26px 0 0 -26px;
+        border: 4px solid var(--border-color);
+        border-top-color: var(--accent-color);
+        border-radius: 50%;
+        animation: spin 0.9s linear infinite;
+        box-shadow: 0 0 15px rgba(0, 112, 209, 0.2);
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      #msg {
+        position: fixed;
+        top: 50%;
+        left: 0;
+        right: 0;
+        transform: translateY(-50%);
+        text-align: center;
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        display: none;
+        color: var(--danger);
+      }
+
+      #container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      #wrap {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 32px 40px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        text-align: center;
+        display: none;
+      }
+
+      #state,
+      #out {
+        display: none;
+      }
+
+      body.done #spin {
+        display: none;
+      }
+      body.fail #spin {
+        display: none;
+      }
+      body.fail #msg {
+        display: block;
+      }
+
+      /* ?log=1 -- the full step log, styled like the landing. */
+      body.log #spin,
+      body.log #msg {
+        display: none;
+      }
+      body.log #wrap {
+        display: block;
+        padding: 24px;
+        max-width: 850px;
+      }
+      body.log #state {
+        display: block;
+        font-size: 22px;
+        font-weight: 700;
+        margin: 0 0 16px;
+        color: var(--text-main);
+      }
+      body.log #out {
+        display: block;
+        white-space: pre-wrap;
+        font: 13px/1.5 Consolas, monospace;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 16px;
+        height: calc(100vh - 200px);
+        overflow-y: auto;
+        text-align: left;
+        color: var(--text-muted);
+      }
+
+      .ok {
+        color: var(--success) !important;
+      }
+      .bad {
+        color: var(--danger) !important;
+      }
+      .warn {
+        color: var(--warning) !important;
+      }
+      .safe {
+        color: var(--success) !important;
+      }
+      .danger {
+        color: var(--danger) !important;
+      }
+      code {
+        color: var(--accent-color);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="brand">
+      <img
+        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAA3tUlEQVR42t29d5xV5bn3/b3v1XaZmT3MDG2Gjoo0KQJSREHAEvuJYowxia9503NSjq9PmtEkGp9TzJNzTo6aclLURANJNBELIgIqVRAQkI44Q2f67LLqfb9/7L3HYZiBQUly8uzPZ39mZs1ea691XffVfle5BX/Dl9ZaAhKIhBC6eFwIgVJqYBiGI48cOTI6Foudb9v2kCiKqtva2ipbWlpKwjCMKaVMIQSGYYSGYbi+76czmUxDNps95Pv+/ubm5h1tbW3bGhsbt99zzz11nb5bLF++3Fi+fLn67ne/q/5WNBB/A6KLAtG1EEJ1OD44l8tN9zzv0kwymQmOgYuKiKKI0q6a4qjCYDAwA2qM6TzRk8c6U3Y628Z3fWn2v//970vPPfccT9d19a1t27a99tprr7106dKlXq1W266srOzJzs7OD91u990bN26027aNbrfbbrvdXqfTeeTm5uYbrVYra63t6uqqq66uPsuyrBv7fD6fyfZv7/vv+35m93v+x3/+9+H29nY7mUx21+l0uvnOO++8c+zYsYf/8Ic/rGvbtnWf67ozOzs78T3vfe93p9PJbrfbnc/nO+jvv/766/vj8bjT7Xa7zWZzJJPJdLvd7unXv/711TfffPN6NpsdcT6fT8v+rffu3au/8MILy6+++uqF+++/X0wms7uqqj4wW7t+/fq973//+50X//jH71y5cuWrH//4x9tBEHwvvvjiO7PZ7A/e+973bvT7/Xf2P9v173//+/D777//xje+8Y1v//3vf78zOzu79vnnn99+++233/b29l4sLS2lVCoV29raevT69evrWq1W3d3dXVtVVbW1tbX1xOPHj29+5513vn7nnXee6Xa7y+VyuQ8//PBbhmGe/N3vfrevVqtv7u7u7vT7/e984xvfuPDWW2/98fXXX3/87//+7+Nvv/3229bW1ttFUfShqqoeN8v985//POXxxx9/8c9//vPu1tZWv9lsXm61WncfPHjwiTfffPM9p9O5bTAYvPzkk0++cebMmXv+9Kc/fcj5fD5rW1tbf/Lz8/sHBgb+cT6fT6fT6fQ754Pve8I1P3v47Nn7/wEMo7sXj63HlwAAAABJRU5ErkJggg=="
+        alt="PS Clinic"
+      />
+      <b>PS CLINIC</b>
+    </div>
+    <div id="spin"></div>
+    <div id="msg">Restart your console</div>
+    <div id="container">
+      <div id="wrap">
+        <div id="state"></div>
+        <div id="out"></div>
+      </div>
+    </div>
+    <script type="module">
+      import "./jb.js?v=10";
+    </script>
+  </body>
+</html>
